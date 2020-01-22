@@ -1,0 +1,90 @@
+ 
+name: Actions 😎
+
+on:
+  pull_request: {}
+  push: { branches: [master] }
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+jobs:
+  requestActivation:
+    name: Request activation ✔
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      # Activate Unity
+      - name: Unity - Activate
+        uses: webbertakken/unity-activate@v1
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+  testRunnerInEditMode:
+    name: Test in editmode 📝
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository (required to test local actions)
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      # Configure test runner
+      - name: Run tests
+        id: testRunner
+        uses: webbertakken/unity-test-runner@v1
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_PROJECT_PATH: /
+          TEST_MODE: editmode
+
+      # Upload artifact
+      - name: Expose as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Test results (edit mode)
+          path: ${{ steps.testRunner.outputs.artifactsPath }}
+
+  buildForWebGL:
+    name: Build for WebGL 🗗
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: webbertakken/unity-builder@v0.5
+        with:
+          projectPath: /
+          unityVersion: 2019.2.11f1
+          targetPlatform: WebGL
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build
+          path: build
+      - run: ls
+      - run: pwd
+      - run: zip -r Build.zip /home/runner/work/CS455_Dynamics/CS455_Dynamics/build
+      - uses: JasonEtco/upload-to-release@master
+        with:
+          args: Build.zip application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  activateAndThenReturnLicense:
+    name: returnLicense 🎈
+    runs-on: ubuntu-latest
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+    steps:
+      # Checkout repository (required to test local actions)
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      # Activate Unity
+      - name: Activate Unity
+        uses: webbertakken/unity-activate@v1
+
+      # Return License
+      - name: Return license
+        uses: webbertakken/unity-return-license@v0.1
