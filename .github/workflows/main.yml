@@ -66,7 +66,7 @@ jobs:
           name: Test results (edit mode)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
 
-  buildForWebGL:
+   buildForWebGL:
     name: Build for WebGL 🗗
     runs-on: ubuntu-latest
     steps:
@@ -89,7 +89,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  activateAndThenReturnLicense:
+   activateAndThenReturnLicense:
     name: returnLicense 🎈
     runs-on: ubuntu-latest
     env:
