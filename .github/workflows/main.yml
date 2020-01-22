@@ -9,7 +9,6 @@ env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
 jobs:
- job_id:
    requestActivation:
     name: Request activation ✔
     runs-on: ubuntu-latest
