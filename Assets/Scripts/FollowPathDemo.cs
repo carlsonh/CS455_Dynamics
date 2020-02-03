@@ -6,22 +6,26 @@ public class FollowPathDemo : Seek
 {
     public GameObject[] path;
     float targetRadius = 1f;
+    int currentPathIndex = 0;
 
 
     public override SteeringOutput getSteering()
     {
-        int currentIndex = 0;
-        target = path[currentIndex];
+        if(target == null)
+        {
+            currentPathIndex = 0;
+            target = path[currentPathIndex];
+        }
 
         float distToTarget = (target.transform.position - character.transform.position).magnitude;
         if (distToTarget < targetRadius)
         {
-            currentIndex++;
+            currentPathIndex++;
             if (currentIndex > path.Length - 1)
             {
-                currentIndex = 0;
+                currentPathIndex = 0;
             }
-            target = path[currentIndex];
+            target = path[currentPathIndex];
         }
 
 
